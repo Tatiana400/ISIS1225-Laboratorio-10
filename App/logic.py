@@ -124,71 +124,19 @@ def totalStops(analyzer):
     """
     Total de paradas de autobus
     """
-    return logic.totalStops(analyzer)
+    return gr.num_vertices(analyzer['connections'])
      
 
 def totalConnections(analyzer):
     """
     Total de enlaces entre las paradas
     """
-    return logic.totalConnections(analyzer)
+    return gr.num_edges(analyzer['connections'])
      
 
 
-def connectedComponents(analyzer):
-    """
-    Numero de componentes fuertemente conectados
-    """
-    start_time = getTime()
-    connected_components = logic.connectedComponents(analyzer)
-    stop_time = getTime()
-    delta_time = deltaTime(stop_time, start_time)
-    return delta_time, connected_components
 
 
-def minimumCostPaths(analyzer, initialStation):
-    """
-    Calcula todos los caminos de costo minimo de initialStation a todas
-    las otras estaciones del sistema
-    """
-    start_time = getTime()
-    minimum_costh_paths = logic.minimumCostPaths(analyzer, initialStation)
-    stop_time = getTime()
-    delta_time = deltaTime(stop_time, start_time)
-    return delta_time, minimum_costh_paths
-
-
-def hasPath(analyzer, destStation):
-    """
-    Informa si existe un camino entre initialStation y destStation
-    """
-    start_time = getTime()
-    has_path = logic.hasPath(analyzer, destStation)
-    stop_time = getTime()
-    delta_time = deltaTime(stop_time, start_time)
-    return delta_time, has_path
-
-
-def minimumCostPath(analyzer, destStation):
-    """
-    Retorna el camino de costo minimo desde initialStation a destStation
-    """
-    start_time = getTime()
-    minimum_costh_path = logic.minimumCostPath(analyzer, destStation)
-    stop_time = getTime()
-    delta_time = deltaTime(stop_time, start_time)
-    return delta_time, minimum_costh_path
-
-
-def servedRoutes(analyzer):
-    """
-    Retorna el camino de costo minimo desde initialStation a destStation
-    """
-    start_time = getTime()
-    maxvert, maxdeg = logic.servedRoutes(analyzer)
-    stop_time = getTime()
-    delta_time = deltaTime(stop_time, start_time)
-    return delta_time, maxvert, maxdeg
     
 
 #Funciones para la medición de tiempos
@@ -251,13 +199,13 @@ def addRouteStop(analyzer, service):
     """
     Agrega a una estacion, una ruta que es servida en ese paradero
     """
-    entry = m.get(analyzer['stops'], service['BusStopCode'])
-    if entry is None:
+    lstroutes = m.get(analyzer['stops'], service['BusStopCode'])
+    if lstroutes is None:
         lstroutes = lt.new_list()
         lt.add_last(lstroutes, service['ServiceNo'])
         m.put(analyzer['stops'], service['BusStopCode'], lstroutes)
     else:
-        lstroutes = entry['value']
+        lstroutes = lstroutes['value']
         info = service['ServiceNo']
         if not lt.is_present(lstroutes, info):
             lt.add_last(lstroutes, info)

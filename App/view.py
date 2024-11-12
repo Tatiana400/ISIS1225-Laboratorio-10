@@ -75,7 +75,7 @@ Menu principal
 """
 
 
-def thread_cycle():
+def thread_main():
     while True:
         printMenu()
         inputs = input('Seleccione una opción para continuar\n>')
@@ -95,5 +95,5 @@ def thread_cycle():
 if __name__ == "__main__":
     threading.stack_size(67108864)  # 64MB stack
     sys.setrecursionlimit(2 ** 20)
-    thread = threading.Thread(target=thread_cycle)
+    thread = threading.Thread(target=thread_main)
     thread.start()
