@@ -55,9 +55,6 @@ def print_menu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de buses de singapur")
-    print("3- Establecer estación base:")
-    print("4- Hay camino entre estacion base y estación: ")
-    print("5- Ruta con menos saltos desde la estación base y estación: ")
     print("0- Salir")
     print("*******************************************")
 
@@ -70,13 +67,6 @@ def option_two(cont):
     print('Numero de vertices: ' + str(numvertex))
     print('Numero de arcos: ' + str(numedges))
     print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
-
-def option_three(cont, ):
-    print("\nEstableciendo estación base")
-    if logic.set_station(cont, station):
-        print('Estación base establecida correctamente')
-    else:
-        print('Estación no encontrada')
 
 
 """
