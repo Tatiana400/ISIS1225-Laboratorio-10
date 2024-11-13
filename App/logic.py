@@ -24,13 +24,11 @@
  *
  """
 
-import config as cf
-from App import logic
 import csv
 import time
+import os
 
-
-
+data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
 
 
 # ___________________________________________________
@@ -58,10 +56,10 @@ def init():
     Llama la funcion de inicializacion  del modelo.
     """
     # analyzer es utilizado para interactuar con el modelo
-    analyzer = newAnalyzer()
+    analyzer = new_analyzer()
     return analyzer
 
-def newAnalyzer():
+def new_analyzer():
     """ Inicializa el analizador
 
    stops: Tabla de hash para guardar los vertices del grafo
@@ -91,7 +89,7 @@ def newAnalyzer():
 # ___________________________________________________
 
 
-def loadServices(analyzer, servicesfile):
+def load_services(analyzer, servicesfile):
     """
     Carga los datos de los archivos CSV en el modelo.
     Se crea un arco entre cada par de estaciones que
@@ -100,7 +98,7 @@ def loadServices(analyzer, servicesfile):
     addRouteConnection crea conexiones entre diferentes rutas
     servidas en una misma estación.
     """
-    servicesfile = cf.data_dir + servicesfile
+    servicesfile = data_dir + servicesfile
     input_file = csv.DictReader(open(servicesfile, encoding="utf-8"),
                                 delimiter=",")
     lastservice = None
@@ -110,24 +108,39 @@ def loadServices(analyzer, servicesfile):
             samedirection = lastservice['Direction'] == service['Direction']
             samebusStop = lastservice['BusStopCode'] == service['BusStopCode']
             if sameservice and samedirection and not samebusStop:
-                addStopConnection(analyzer, lastservice, service)
+                add_stop_connection(analyzer, lastservice, service)
         lastservice = service
   
     return analyzer
 
+def set_station(analyzer, station):
+    """
+    Establece la estación base para la consulta de caminos
+    """
+    try:
+        station = str(station)
+        vertex = gr.get_vertex(analyzer['connections'], station)
+        if vertex is not None:
+            analyzer['components'] = gr.connected_components(analyzer['connections'])
+            analyzer['paths'] = gr.dijkstra(analyzer['connections'], vertex)
+            return True
+        else:
+            return False
+    except Exception as exp:
+        return exp
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
 
 
-def totalStops(analyzer):
+def total_stops(analyzer):
     """
     Total de paradas de autobus
     """
     return gr.num_vertices(analyzer['connections'])
      
 
-def totalConnections(analyzer):
+def total_connections(analyzer):
     """
     Total de enlaces entre las paradas
     """
@@ -141,13 +154,13 @@ def totalConnections(analyzer):
 
 #Funciones para la medición de tiempos
 
-def getTime():
+def get_time():
     """
     devuelve el instante tiempo de procesamiento en milisegundos
     """
     return float(time.perf_counter()*1000)
 
-def deltaTime(end, start):
+def delta_time(end, start):
     """
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
@@ -157,7 +170,7 @@ def deltaTime(end, start):
 
 # Funciones para agregar informacion al grafo
 
-def addStopConnection(analyzer, lastservice, service):
+def add_stop_connection(analyzer, lastservice, service):
     """
     Adiciona las estaciones al grafo como vertices y arcos entre las
     estaciones adyacentes.
@@ -170,21 +183,21 @@ def addStopConnection(analyzer, lastservice, service):
     Si la estacion sirve otra ruta, se tiene: 75009-101
     """
     try:
-        origin = formatVertex(lastservice)
-        destination = formatVertex(service)
-        cleanServiceDistance(lastservice, service)
+        origin = format_vertex(lastservice)
+        destination = format_vertex(service)
+        clean_service_distance(lastservice, service)
         distance = float(service['Distance']) - float(lastservice['Distance'])
         distance = abs(distance)
-        addStop(analyzer, origin)
-        addStop(analyzer, destination)
-        addConnection(analyzer, origin, destination, distance)
-        addRouteStop(analyzer, service)
-        addRouteStop(analyzer, lastservice)
+        add_stop(analyzer, origin)
+        add_stop(analyzer, destination)
+        add_connection(analyzer, origin, destination, distance)
+        add_route_stop(analyzer, service)
+        add_route_stop(analyzer, lastservice)
         return analyzer
     except Exception as exp:
         return exp
 
-def addStop(analyzer, stopid):
+def add_stop(analyzer, stopid):
     """
     Adiciona una estación como un vertice del grafo
     """
@@ -195,7 +208,7 @@ def addStop(analyzer, stopid):
 
 
 
-def addRouteStop(analyzer, service):
+def add_route_stop(analyzer, service):
     """
     Agrega a una estacion, una ruta que es servida en ese paradero
     """
@@ -212,7 +225,7 @@ def addRouteStop(analyzer, service):
     return analyzer
 
 
-def addConnection(analyzer, origin, destination, distance):
+def add_connection(analyzer, origin, destination, distance):
     """
     Adiciona un arco entre dos estaciones
     """
@@ -226,7 +239,7 @@ def addConnection(analyzer, origin, destination, distance):
 # Funciones Helper
 # ==============================
 
-def cleanServiceDistance(lastservice, service):
+def clean_service_distance(lastservice, service):
     """
     En caso de que el archivo tenga un espacio en la
     distancia, se reemplaza con cero.
@@ -237,7 +250,7 @@ def cleanServiceDistance(lastservice, service):
         lastservice['Distance'] = 0
 
 
-def formatVertex(service):
+def format_vertex(service):
     """
     Se formatea el nombrer del vertice con el id de la estación
     seguido de la ruta.

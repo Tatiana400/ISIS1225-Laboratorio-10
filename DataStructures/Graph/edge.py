@@ -1,6 +1,6 @@
 def new_edge(v_a, v_b, weight=0):
     """
-    Crea un nuevo arco entrelos vertices ''v_a'' y ''v_b'' con un peso ''weight''
+    Crea un nuevo arco entrelos vertices ``v_a`` y ``v_b`` con un peso ``weight``
 
     Se crea un arco con los siguientes atributos:
 
@@ -24,7 +24,7 @@ def new_edge(v_a, v_b, weight=0):
 
 def weight(edge):
     """
-    Retorna el peso del arco ''edge''
+    Retorna el peso del arco ``edge``
 
     :param edge: Arco del cual se quiere obtener el peso
     :type edge: edge
@@ -37,7 +37,7 @@ def weight(edge):
 
 def either(edge):
     """
-    Retorna el vertice A del arco ''edge''
+    Retorna el vertice A del arco ``edge``
 
     :param edge: Arco del cual se quiere obtener el vertice A
     :type edge: edge
@@ -50,7 +50,7 @@ def either(edge):
 
 def other(edge, veither):
     """
-    Retorna el vertice B del arco
+    Retorna el vertice del arco ``edge`` que no es igual a ``veither``
 
     :param edge: Arco del cual se quiere obtener el vertice B
     :type edge: edge
@@ -68,7 +68,7 @@ def other(edge, veither):
 
 def set_weight(edge, weight):
     """
-    Cambia el peso del arco ''edge'' por el valor ''weight''
+    Cambia el peso del arco ``edge`` por el valor ``weight``
 
     :param edge: Arco al cual se le quiere cambiar el peso
     :type edge: edge

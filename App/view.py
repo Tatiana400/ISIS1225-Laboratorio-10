@@ -26,10 +26,8 @@
 
 
 import sys
-import config
 import threading
 from App import logic
-assert config
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -51,23 +49,34 @@ initialStation = None
 # ___________________________________________________
 
 
-def printMenu():
+def print_menu():
     print("\n")
     print("*******************************************")
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de buses de singapur")
+    print("3- Establecer estación base:")
+    print("4- Hay camino entre estacion base y estación: ")
+    print("5- Ruta con menos saltos desde la estación base y estación: ")
     print("0- Salir")
     print("*******************************************")
 
 
-def optionTwo(cont):
+def option_two(cont):
     print("\nCargando información de transporte de singapur ....")
-    logic.loadServices(cont, servicefile)
-    print('Grafo creado correctamente')
+    logic.load_services(cont, servicefile)
+    numedges = logic.total_connections(cont)
+    numvertex = logic.total_stops(cont)
+    print('Numero de vertices: ' + str(numvertex))
+    print('Numero de arcos: ' + str(numedges))
     print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
 
-
+def option_three(cont, ):
+    print("\nEstableciendo estación base")
+    if logic.set_station(cont, station):
+        print('Estación base establecida correctamente')
+    else:
+        print('Estación no encontrada')
 
 
 """
@@ -75,9 +84,10 @@ Menu principal
 """
 
 
-def thread_main():
-    while True:
-        printMenu()
+def main():
+    working = True
+    while working:
+        print_menu()
         inputs = input('Seleccione una opción para continuar\n>')
 
         if int(inputs[0]) == 1:
@@ -86,14 +96,15 @@ def thread_main():
             cont = logic.init()
 
         elif int(inputs[0]) == 2:
-            optionTwo(cont)
+            option_two(cont)
         else:
-            sys.exit(0)
+            working = False
+            print("Saliendo...")
     sys.exit(0)
 
 
 if __name__ == "__main__":
     threading.stack_size(67108864)  # 64MB stack
     sys.setrecursionlimit(2 ** 20)
-    thread = threading.Thread(target=thread_main)
+    thread = threading.Thread(target=main)
     thread.start()
